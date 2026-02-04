@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { serverEndpoint } from "../config/appConfig";
 
-function CreateGroupModal({ show, onHide }) {
+function CreateGroupModal({ show, onHide, onSuccess }) {
     const [formData, setFormData] = useState({
         name: '',
         description: ''
@@ -46,6 +46,8 @@ function CreateGroupModal({ show, onHide }) {
                     { name: formData.name, description: formData.description },
                     { withCredentials: true }
                 );
+                onSuccess();
+                onHide();
             } catch (error) {
                 console.log(error);
                 setErrors({ message: 'Unable to add group, please try again'});
@@ -101,7 +103,6 @@ function CreateGroupModal({ show, onHide }) {
                             </button>
                             <button type="submit" 
                                 className="btn btn-primary mx-4 rounded-pill"
-                                onClick={onHide}
                             >
                                 Add
                             </button>

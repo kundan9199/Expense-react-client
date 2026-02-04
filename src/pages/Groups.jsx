@@ -2,10 +2,12 @@ import axios from "axios";
 import { serverEndpoint } from "../config/appConfig";
 import { useEffect, useState } from "react";
 import GroupCard from "../components/GroupCard";
+import CreateGroupModal from "../components/CreateGroupModal";
 
 function Groups() {
     const [groups, setGroups] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [show, setShow] = useState(false);
 
     const fetchGroups = async () => {
         try {
@@ -43,7 +45,7 @@ function Groups() {
                     <h2 className="fw-bold">Your Groups</h2>
                     <p className="text-muted">Manage your shared expenses and split expenses</p>
                 </div>
-                <button className="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
+                <button className="btn btn-primary rounded-pill px-4 fw-bold shadow-sm" onClick={() => setShow(true)}>
                     Create Group
                 </button>
             </div>
@@ -63,6 +65,8 @@ function Groups() {
                     ))}
                 </div>
             )}
+
+            <CreateGroupModal show={show} onHide={() => setShow(false)} onSuccess={() => fetchGroups()} />
         </div>
     );
 }

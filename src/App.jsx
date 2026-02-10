@@ -12,6 +12,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { SET_USER } from "./redux/user/action";
 import Groups from "./pages/Groups";
 import GroupExpenses from "./pages/GroupExpenses";
+import ManageUsers from "./pages/ManageUsers";
+import ProtectedRoute from  "./rbac/ProtectedRoutes";
+import UnauthorizedAccess from "./components/errors/UnauthorizedAccess";
 
 function App() {
     const dispatch = useDispatch();
@@ -108,10 +111,37 @@ function App() {
                     )
                 }
             />
+            <Route
+                path="/manage-users"
+                element={
+                    userDetails ? (
+                        <protectedRoute roles ={["admin"]}>
+                        <UserLayout>
+                            <ManageUsers />
+                        </UserLayout>
+                        </protectedRoute>
+                    ) : (
+                        <Navigate to="/login" />
+                    )
+                }
+            />
 
             <Route
                 path="/logout"
                 element={userDetails ? <Logout /> : <Navigate to="/login" />}
+            />
+            
+             <Route
+                path="/unauthorized-access"
+                element={
+                    userDetails ? (
+                        <UserLayout>
+                            <Unauthorized-acces/>
+                        </UserLayout>
+                    ) : (
+                        <Navigate to="/Unauthorized-acces"/>
+                    )
+                }
             />
         </Routes>
     );

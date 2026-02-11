@@ -13,8 +13,11 @@ import { SET_USER } from "./redux/user/action";
 import Groups from "./pages/Groups";
 import GroupExpenses from "./pages/GroupExpenses";
 import ManageUsers from "./pages/ManageUsers";
-import ProtectedRoute from  "./rbac/ProtectedRoutes";
 import UnauthorizedAccess from "./components/errors/UnauthorizedAccess";
+import ProtectedRoute from "./rbac/ProtectedRoutes";
+import ManagePayments from "./pages/ManagePayments";
+import ManageSubscription from "./pages/ManageSubscription";
+
 
 function App() {
     const dispatch = useDispatch();
@@ -90,9 +93,11 @@ function App() {
                 path="/dashboard"
                 element={
                     userDetails ? (
-                        <UserLayout>
-                            <Groups />
-                        </UserLayout>
+                        <ProtectedRoute requiredPermission="canViewGroups">
+                            <UserLayout>
+                                <Groups />
+                            </UserLayout>
+                        </ProtectedRoute>
                     ) : (
                         <Navigate to="/login" />
                     )
@@ -103,23 +108,70 @@ function App() {
                 path="/groups/:groupId"
                 element={
                     userDetails ? (
+                        <ProtectedRoute requiredPermission="canViewGroups">
+                            <UserLayout>
+                                <GroupExpenses />
+                            </UserLayout>
+                        </ProtectedRoute>
+                    ) : (
+                        <Navigate to="/login" />
+                    )
+                }
+            />
+
+            <Route
+                path="/manage-users"
+                element={
+                    userDetails ? (
+                        <ProtectedRoute requiredPermission="canViewUsers">
+                            <UserLayout>
+                                <ManageUsers />
+                            </UserLayout>
+                        </ProtectedRoute>
+                    ) : (
+                        <Navigate to="/login" />
+                    )
+                }
+            />
+
+            <Route
+                path="/unauthorized-access"
+                element={
+                    userDetails ? (
                         <UserLayout>
-                            <GroupExpenses />
+                            <UnauthorizedAccess />
                         </UserLayout>
+                    ) : (
+                        <AppLayout>
+                            <UnauthorizedAccess />
+                        </AppLayout>
+                    )
+                }
+            />
+
+            <Route
+                path="/manage-payments"
+                element={
+                    userDetails ? (
+                        <ProtectedRoute roles={["admin"]}>
+                            <UserLayout>
+                                <ManagePayments />
+                            </UserLayout>
+                        </ProtectedRoute>
                     ) : (
                         <Navigate to="/login" />
                     )
                 }
             />
             <Route
-                path="/manage-users"
+                path="/manage-subscription"
                 element={
                     userDetails ? (
-                        <protectedRoute roles ={["admin"]}>
-                        <UserLayout>
-                            <ManageUsers />
-                        </UserLayout>
-                        </protectedRoute>
+                        <ProtectedRoute roles={["admin"]}>
+                            <UserLayout>
+                                <ManageSubscription />
+                            </UserLayout>
+                        </ProtectedRoute>
                     ) : (
                         <Navigate to="/login" />
                     )
@@ -129,19 +181,6 @@ function App() {
             <Route
                 path="/logout"
                 element={userDetails ? <Logout /> : <Navigate to="/login" />}
-            />
-            
-             <Route
-                path="/unauthorized-access"
-                element={
-                    userDetails ? (
-                        <UserLayout>
-                            <Unauthorized-acces/>
-                        </UserLayout>
-                    ) : (
-                        <Navigate to="/Unauthorized-acces"/>
-                    )
-                }
             />
         </Routes>
     );
